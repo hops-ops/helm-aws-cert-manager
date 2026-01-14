@@ -15,7 +15,7 @@ spec:
   - apiVersion: pkg.crossplane.io/v1
     kind: Configuration
     package: ghcr.io/hops-ops/aws-pod-identity
-    version: '>=v0.4.0'
+    version: '>=v0.4.1'
   description: Installs cert-manager with AWS Pod Identity for Route53 DNS01 challenges.
   license: Apache-2.0
   maintainer: Patrick Lee Scott <pat@patscott.io>
