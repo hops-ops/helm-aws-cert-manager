@@ -1,0 +1,56 @@
+# code: language=yaml
+#
+# AWS Pod Identity for cert-manager Route53 access
+#
+
+---
+apiVersion: aws.hops.ops.com.ai/v1alpha1
+kind: PodIdentity
+metadata:
+  name: {{ $state.name }}-pod-identity
+  annotations:
+    {{ setResourceNameAnnotation "pod-identity" }}
+  labels: {{ $state.labels | toJson }}
+spec:
+  managementPolicies: {{ $state.managementPolicies | toJson }}
+  clusterName: {{ $state.clusterName }}
+  region: {{ $state.aws.region }}
+  providerConfigRef:
+    name: {{ $state.aws.providerConfigRef.name }}
+    kind: {{ $state.aws.providerConfigRef.kind }}
+  {{- if $state.aws.rolePrefix }}
+  rolePrefix: {{ $state.aws.rolePrefix }}
+  {{- end }}
+  {{- if $state.aws.permissionsBoundaryArn }}
+  permissionsBoundaryArn: {{ $state.aws.permissionsBoundaryArn }}
+  {{- end }}
+  serviceAccount:
+    name: {{ $state.serviceAccount.name }}
+    namespace: {{ $state.serviceAccount.namespace }}
+  inlinePolicy:
+    - name: cert-manager-route53
+      policy: |
+        {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": "route53:GetChange",
+              "Resource": "arn:aws:route53:::change/*"
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "route53:ChangeResourceRecordSets",
+                "route53:ListResourceRecordSets"
+              ],
+              "Resource": "arn:aws:route53:::hostedzone/*"
+            },
+            {
+              "Effect": "Allow",
+              "Action": "route53:ListHostedZonesByName",
+              "Resource": "*"
+            }
+          ]
+        }
+  tags: {{ $state.aws.tags | toJson }}

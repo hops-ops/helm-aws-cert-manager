@@ -1,0 +1,78 @@
+# code: language=yaml
+#
+# Initialize $state with spec defaults
+#
+
+{{- $xr := getCompositeResource . }}
+{{- $spec := $xr.spec | default dict }}
+{{- $metadata := $xr.metadata | default dict }}
+
+# ==============================================================================
+# Core defaults
+# ==============================================================================
+{{- $name := $metadata.name | default "cert-manager" }}
+{{- $clusterName := $spec.clusterName | default $name }}
+{{- $namespace := $spec.namespace | default "cert-manager" }}
+{{- $managementPolicies := $spec.managementPolicies | default (list "*") }}
+
+# Labels
+{{- $defaultLabels := dict
+  "hops.ops.com.ai/managed" "true"
+  "hops.ops.com.ai/certmanager" $name
+}}
+{{- $labels := merge $defaultLabels ($spec.labels | default dict) }}
+
+# Helm provider config
+{{- $helmProviderConfigRef := $spec.providerConfigRef | default dict }}
+{{- $helmProviderConfigRef = dict
+  "name" ($helmProviderConfigRef.name | default $clusterName)
+  "kind" ($helmProviderConfigRef.kind | default "ProviderConfig")
+}}
+
+# ==============================================================================
+# AWS defaults
+# ==============================================================================
+{{- $aws := $spec.aws | default dict }}
+{{- $awsRegion := $aws.region }}
+
+{{- $awsProviderConfigRef := $aws.providerConfigRef | default dict }}
+{{- $awsProviderConfigRef = dict
+  "name" ($awsProviderConfigRef.name | default $clusterName)
+  "kind" ($awsProviderConfigRef.kind | default "ProviderConfig")
+}}
+
+# Default tags
+{{- $defaultTags := dict
+  "hops.ops.com.ai/managed" "true"
+  "hops.ops.com.ai/certmanager" $name
+}}
+{{- $awsTags := merge $defaultTags ($aws.tags | default dict) }}
+
+# ==============================================================================
+# Initialize $state
+# ==============================================================================
+{{- $state := dict
+  "name" $name
+  "clusterName" $clusterName
+  "namespace" $namespace
+  "managementPolicies" $managementPolicies
+  "labels" $labels
+  "helm" (dict
+    "providerConfigRef" $helmProviderConfigRef
+    "releaseName" ($spec.name | default $name)
+    "namespace" $namespace
+    "values" ($spec.values | default dict)
+    "overrideAllValues" ($spec.overrideAllValues | default dict)
+  )
+  "aws" (dict
+    "region" $awsRegion
+    "providerConfigRef" $awsProviderConfigRef
+    "permissionsBoundaryArn" ($aws.permissionsBoundaryArn | default "")
+    "rolePrefix" ($aws.rolePrefix | default "")
+    "tags" $awsTags
+  )
+  "serviceAccount" (dict
+    "name" "cert-manager"
+    "namespace" $namespace
+  )
+}}

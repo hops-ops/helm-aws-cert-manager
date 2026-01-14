@@ -1,0 +1,9 @@
+apiVersion: helm.aws.hops.ops.com.ai/v1alpha1
+kind: CertManager
+metadata:
+  name: cert-manager
+  namespace: default
+spec:
+  clusterName: my-cluster
+  aws:
+    region: us-east-1

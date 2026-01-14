@@ -1,0 +1,15 @@
+# code: language=yaml
+#
+# Compute status values from observed state
+#
+
+# ==============================================================================
+# Compute status output
+# ==============================================================================
+
+# Ready state determined by function-auto-ready
+{{- $ready := false }}
+
+{{- $state = set $state "status" (dict
+  "ready" $ready
+) }}
