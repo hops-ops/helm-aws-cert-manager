@@ -162,7 +162,6 @@ _items = [
                         # awsProviderConfigRef must be explicit since AutoEKSCluster doesn't create an AWS ProviderConfig
                         awsProviderConfigRef = {
                             name = "default"
-                            namespace = _namespace
                         }
                         aws = {
                             region = _region
