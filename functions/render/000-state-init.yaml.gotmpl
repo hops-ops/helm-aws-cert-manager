@@ -33,7 +33,7 @@
 
 {{- $awsProviderConfigRef := $spec.awsProviderConfigRef | default dict }}
 {{- $awsProviderConfigRef = dict
-  "name" ($awsProviderConfigRef.name | default $clusterName)
+  "name" ($awsProviderConfigRef.name | default "default")
   "kind" ($awsProviderConfigRef.kind | default "ProviderConfig")
 }}
 

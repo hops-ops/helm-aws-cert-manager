@@ -52,7 +52,7 @@ spec:
                     - ProviderConfig
                     - ClusterProviderConfig
               awsProviderConfigRef:
-                description: Reference to the AWS ProviderConfig. Defaults to clusterName.
+                description: Reference to the AWS ProviderConfig. Defaults to "default".
                 type: object
                 properties:
                   name:

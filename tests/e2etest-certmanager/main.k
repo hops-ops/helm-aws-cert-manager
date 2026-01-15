@@ -159,10 +159,7 @@ _items = [
                     spec = {
                         clusterName = _test_name
                         # helmProviderConfigRef defaults to clusterName (uses ProviderConfig created by AutoEKSCluster)
-                        # awsProviderConfigRef must be explicit since AutoEKSCluster doesn't create an AWS ProviderConfig
-                        awsProviderConfigRef = {
-                            name = "default"
-                        }
+                        # awsProviderConfigRef defaults to "default"
                         aws = {
                             region = _region
                         }
