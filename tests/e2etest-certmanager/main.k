@@ -222,6 +222,15 @@ _items = [
                     }
                     spec = {
                         clusterName = _test_name
+                        # Explicitly set provider config refs to match the "default" ProviderConfigs
+                        helmProviderConfigRef = {
+                            name = "default"
+                            kind = "ProviderConfig"
+                        }
+                        awsProviderConfigRef = {
+                            name = "default"
+                            kind = "ProviderConfig"
+                        }
                         aws = {
                             region = _region
                         }

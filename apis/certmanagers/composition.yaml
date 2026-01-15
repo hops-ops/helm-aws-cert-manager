@@ -6,6 +6,7 @@ spec:
   compositeTypeRef:
     apiVersion: helm.aws.hops.ops.com.ai/v1alpha1
     kind: CertManager
+  compositeDeletePolicy: Foreground
   mode: Pipeline
   pipeline:
   - functionRef:

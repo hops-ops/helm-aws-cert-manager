@@ -22,11 +22,19 @@
 }}
 {{- $labels := merge $defaultLabels ($spec.labels | default dict) }}
 
-# Helm provider config
-{{- $helmProviderConfigRef := $spec.providerConfigRef | default dict }}
+# ==============================================================================
+# Provider config refs
+# ==============================================================================
+{{- $helmProviderConfigRef := $spec.helmProviderConfigRef | default dict }}
 {{- $helmProviderConfigRef = dict
   "name" ($helmProviderConfigRef.name | default $clusterName)
   "kind" ($helmProviderConfigRef.kind | default "ProviderConfig")
+}}
+
+{{- $awsProviderConfigRef := $spec.awsProviderConfigRef | default dict }}
+{{- $awsProviderConfigRef = dict
+  "name" ($awsProviderConfigRef.name | default $clusterName)
+  "kind" ($awsProviderConfigRef.kind | default "ProviderConfig")
 }}
 
 # ==============================================================================
@@ -34,12 +42,6 @@
 # ==============================================================================
 {{- $aws := $spec.aws | default dict }}
 {{- $awsRegion := $aws.region }}
-
-{{- $awsProviderConfigRef := $aws.providerConfigRef | default dict }}
-{{- $awsProviderConfigRef = dict
-  "name" ($awsProviderConfigRef.name | default $clusterName)
-  "kind" ($awsProviderConfigRef.kind | default "ProviderConfig")
-}}
 
 # Default tags
 {{- $defaultTags := dict

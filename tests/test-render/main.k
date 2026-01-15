@@ -78,11 +78,13 @@ _items = [
                 {
                     apiVersion = "helm.hops.ops.com.ai/v1alpha1"
                     kind = "CertManager"
+                    metadata.name = "cert-manager"
                     spec.namespace = "cert-manager-system"
                 }
                 {
                     apiVersion = "aws.hops.ops.com.ai/v1alpha1"
                     kind = "PodIdentity"
+                    metadata.name = "cert-manager-pod-identity"
                     spec = {
                         rolePrefix = "prod-"
                         serviceAccount = {

@@ -8,6 +8,7 @@ spec:
     kind: CertManager
     plural: certmanagers
   scope: Namespaced
+  defaultCompositeDeletePolicy: Foreground
   versions:
   - name: v1alpha1
     referenceable: true
@@ -37,12 +38,12 @@ spec:
                 additionalProperties:
                   type: string
                 x-kubernetes-preserve-unknown-fields: true
-              providerConfigRef:
-                description: Reference to the Helm ProviderConfig.
+              helmProviderConfigRef:
+                description: Reference to the Helm ProviderConfig. Defaults to clusterName.
                 type: object
                 properties:
                   name:
-                    description: Name of the ProviderConfig. Defaults to clusterName.
+                    description: Name of the Helm ProviderConfig.
                     type: string
                   kind:
                     description: Kind of the ProviderConfig. Defaults to ProviderConfig.
@@ -50,6 +51,16 @@ spec:
                     enum:
                     - ProviderConfig
                     - ClusterProviderConfig
+              awsProviderConfigRef:
+                description: Reference to the AWS ProviderConfig. Defaults to clusterName.
+                type: object
+                properties:
+                  name:
+                    description: Name of the AWS ProviderConfig.
+                    type: string
+                  kind:
+                    description: Kind of the ProviderConfig. Defaults to ProviderConfig.
+                    type: string
               namespace:
                 description: Namespace for the Helm release. Defaults to cert-manager.
                 type: string
@@ -71,16 +82,6 @@ spec:
                   region:
                     description: AWS region for the EKS cluster.
                     type: string
-                  providerConfigRef:
-                    description: Reference to the AWS ProviderConfig. Defaults to clusterName.
-                    type: object
-                    properties:
-                      name:
-                        description: Name of the AWS ProviderConfig.
-                        type: string
-                      kind:
-                        description: Kind of the ProviderConfig. Defaults to ProviderConfig.
-                        type: string
                   permissionsBoundaryArn:
                     description: ARN of the IAM permissions boundary to apply to the role.
                     type: string

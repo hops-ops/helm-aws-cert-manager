@@ -4,11 +4,45 @@
 #
 
 # ==============================================================================
+# Extract observed state from composed resources
+# ==============================================================================
+{{- $observed := $.observed.resources | default dict }}
+
+# Check if helm-cert-manager is ready
+{{- $helmCertManagerObs := get $observed "helm-cert-manager" | default dict }}
+{{- $helmCertManagerResource := $helmCertManagerObs.resource | default dict }}
+{{- $helmCertManagerStatus := $helmCertManagerResource.status | default dict }}
+{{- $helmCertManagerConditions := $helmCertManagerStatus.conditions | default list }}
+{{- $helmCertManagerReady := false }}
+{{- range $cond := $helmCertManagerConditions }}
+  {{- if and (eq $cond.type "Ready") (eq $cond.status "True") }}
+    {{- $helmCertManagerReady = true }}
+  {{- end }}
+{{- end }}
+
+# Check if pod-identity is ready
+{{- $podIdentityObs := get $observed "pod-identity" | default dict }}
+{{- $podIdentityResource := $podIdentityObs.resource | default dict }}
+{{- $podIdentityStatus := $podIdentityResource.status | default dict }}
+{{- $podIdentityConditions := $podIdentityStatus.conditions | default list }}
+{{- $podIdentityReady := false }}
+{{- range $cond := $podIdentityConditions }}
+  {{- if and (eq $cond.type "Ready") (eq $cond.status "True") }}
+    {{- $podIdentityReady = true }}
+  {{- end }}
+{{- end }}
+
+# ==============================================================================
 # Compute status output
 # ==============================================================================
 
 # Ready state determined by function-auto-ready
 {{- $ready := false }}
+
+{{- $state = set $state "observed" (dict
+  "helmCertManager" (dict "ready" $helmCertManagerReady)
+  "podIdentity" (dict "ready" $podIdentityReady)
+) }}
 
 {{- $state = set $state "status" (dict
   "ready" $ready
