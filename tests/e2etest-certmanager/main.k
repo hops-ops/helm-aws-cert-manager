@@ -111,20 +111,6 @@ _items = [
                         }
                     }
                 }
-                # Helm ProviderConfig - uses InjectedIdentity (in-cluster access)
-                {
-                    apiVersion = "helm.m.crossplane.io/v1beta1"
-                    kind = "ProviderConfig"
-                    metadata = {
-                        name = "default"
-                        namespace = _namespace
-                    }
-                    spec = {
-                        credentials = {
-                            source = "InjectedIdentity"
-                        }
-                    }
-                }
             ]
 
             # manifests: All XRs that need cleanup (AutoEKSCluster, CertManager)
@@ -172,14 +158,11 @@ _items = [
                     }
                     spec = {
                         clusterName = _test_name
-                        # Explicitly set provider config refs to match the "default" ProviderConfigs
-                        helmProviderConfigRef = {
-                            name = "default"
-                            kind = "ProviderConfig"
-                        }
+                        # helmProviderConfigRef defaults to clusterName (uses ProviderConfig created by AutoEKSCluster)
+                        # awsProviderConfigRef must be explicit since AutoEKSCluster doesn't create an AWS ProviderConfig
                         awsProviderConfigRef = {
                             name = "default"
-                            kind = "ProviderConfig"
+                            namespace = _namespace
                         }
                         aws = {
                             region = _region
