@@ -13,4 +13,4 @@ spec:
   - configuration: ghcr.io/hops-ops/helm-cert-manager
     version: ">=v0.6.0"
   - configuration: ghcr.io/hops-ops/aws-pod-identity
-    version: ">=v0.4.1"
+    version: ">=v0.5.0"
