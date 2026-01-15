@@ -53,7 +53,7 @@ jobs:
           "autoeksclusters.aws.hops.ops.com.ai",
           "certmanagers.helm.aws.hops.ops.com.ai"
         ]
-      timeout-minutes: 45
+      timeout-minutes: 60
       cleanup-timeout-minutes: 45
 
   publish:
