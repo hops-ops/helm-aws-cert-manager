@@ -73,7 +73,7 @@ _items = [
                         name = "aws-auto-eks-cluster"
                     }
                     spec = {
-                        package = "ghcr.io/hops-ops/aws-auto-eks-cluster:v0.1.0"
+                        package = "ghcr.io/hops-ops/aws-auto-eks-cluster:v0.4.0"
                     }
                 }
             ]
@@ -111,6 +111,80 @@ _items = [
                         }
                     }
                 }
+
+                # Kubernetes ProviderConfig for account ProviderConfig Objects
+                # Uses InjectedIdentity for in-cluster access
+                {
+                    apiVersion: "kubernetes.m.crossplane.io/v1alpha1"
+                    kind: "ProviderConfig"
+                    metadata: {
+                        name: "default"
+                        namespace: "default"
+                    }
+                    spec: {
+                        credentials: {
+                            source: "InjectedIdentity"
+                        }
+                    }
+                },
+                # DeploymentRuntimeConfig for Kubernetes provider with known SA name
+                {
+                    apiVersion: "pkg.crossplane.io/v1beta1"
+                    kind: "DeploymentRuntimeConfig"
+                    metadata: {
+                        name: "crossplane-contrib-provider-kubernetes"
+                    }
+                    spec: {
+                        serviceAccountTemplate: {
+                            metadata: {
+                                name: "crossplane-contrib-provider-kubernetes"
+                            }
+                        }
+                    }
+                },
+                # ServiceAccount for Kubernetes provider
+                {
+                    apiVersion: "v1"
+                    kind: "ServiceAccount"
+                    metadata: {
+                        name: "crossplane-contrib-provider-kubernetes"
+                        namespace: "crossplane-system"
+                    }
+                },
+                # ClusterRoleBinding granting cluster-admin to the K8s provider SA
+                {
+                    apiVersion: "rbac.authorization.k8s.io/v1"
+                    kind: "ClusterRoleBinding"
+                    metadata: {
+                        name: "crossplane-contrib-provider-kubernetes-admin"
+                    }
+                    roleRef: {
+                        apiGroup: "rbac.authorization.k8s.io"
+                        kind: "ClusterRole"
+                        name: "cluster-admin"
+                    }
+                    subjects: [
+                        {
+                            kind: "ServiceAccount"
+                            name: "crossplane-contrib-provider-kubernetes"
+                            namespace: "crossplane-system"
+                        }
+                    ]
+                },
+                # Provider with runtimeConfigRef to use our DeploymentRuntimeConfig
+                {
+                    apiVersion: "pkg.crossplane.io/v1"
+                    kind: "Provider"
+                    metadata: {
+                        name: "crossplane-contrib-provider-kubernetes"
+                    }
+                    spec: {
+                        package: "xpkg.crossplane.io/crossplane-contrib/provider-kubernetes:v1.2.0"
+                        runtimeConfigRef: {
+                            name: "crossplane-contrib-provider-kubernetes"
+                        }
+                    }
+                }
             ]
 
             # manifests: All XRs that need cleanup (AutoEKSCluster, CertManager)
@@ -134,6 +208,10 @@ _items = [
                             name = "default"
                             kind = "ProviderConfig"
                         }
+                        kubernetesProviderConfigRef = {
+                            name = "default"
+                            kind = "ProviderConfig"
+                        }
                         tags = {
                             "e2etest" = "true"
                             "test-run" = _now
@@ -143,7 +221,7 @@ _items = [
                             enabled = True
                         }
                         oidc = {
-                            enabled = True
+                            enabled = False
                         }
                     }
                 }
