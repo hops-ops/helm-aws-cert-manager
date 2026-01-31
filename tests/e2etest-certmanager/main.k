@@ -26,6 +26,7 @@ import file
 import datetime
 import math
 import models.io.upbound.dev.meta.v1alpha1 as metav1alpha1
+import models.ai.com.ops.hops.aws.helm.v1alpha1 as helmawsv1alpha1
 
 # Read AWS credentials from local file (gitignored)
 _creds = file.read("secrets/aws-creds")
@@ -55,8 +56,7 @@ _items = [
         metadata.name = "certmanager"
         spec = {
             crossplane = {
-                version = "2.0.2-up.5"
-                autoUpgrade.channel = "None"
+                autoUpgrade.channel = "Rapid"
             }
             defaultConditions = ["Ready"]
             timeoutSeconds = 5400  # 90 minutes for EKS cluster creation
@@ -229,20 +229,14 @@ _items = [
                 }
 
                 # 2. helm.aws CertManager - installs cert-manager with AWS Pod Identity
-                {
-                    apiVersion = "helm.aws.hops.ops.com.ai/v1alpha1"
-                    kind = "CertManager"
-                    metadata = {
-                        name = "cert-manager"
-                        namespace = _namespace
-                    }
+                helmawsv1alpha1.CertManager {
+                    metadata.name = "cert-manager"
+                    metadata.namespace = _namespace
                     spec = {
                         clusterName = _test_name
                         # helmProviderConfigRef defaults to clusterName (uses ProviderConfig created by AutoEKSCluster)
                         # awsProviderConfigRef defaults to "default"
-                        aws = {
-                            region = _region
-                        }
+                        aws.region = _region
                     }
                 }
             ]
