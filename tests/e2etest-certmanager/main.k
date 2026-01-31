@@ -39,6 +39,7 @@ _test_name = "e2e-cm-" + _now
 _namespace = "default"
 _region = "us-east-2"
 _account_id = "034489662075"  # CI test account
+_admin_role_arn = "arn:aws:iam::034489662075:role/aws-reserved/sso.amazonaws.com/us-east-2/AWSReservedSSO_AdminAccess_e8d960044a7864f6"
 
 # =============================================================================
 # Persistent Network Infrastructure (from aws-network e2e test - hops-test)
@@ -73,7 +74,7 @@ _items = [
                         name = "aws-auto-eks-cluster"
                     }
                     spec = {
-                        package = "ghcr.io/hops-ops/aws-auto-eks-cluster:v0.4.0"
+                        package = "ghcr.io/hops-ops/aws-auto-eks-cluster:v0.6.0"
                     }
                 }
             ]
@@ -199,6 +200,7 @@ _items = [
                         namespace = _namespace
                     }
                     spec = {
+                        adminRoleArn = _admin_role_arn
                         clusterName = _test_name
                         region = _region
                         accountId = _account_id
