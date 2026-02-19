@@ -1,5 +1,0 @@
-apiVersion: v2
-name: helm-aws-cert-manager
-version: 0.0.0
-description: Deploys helm-aws-cert-manager
-appVersion: v0.0.0
